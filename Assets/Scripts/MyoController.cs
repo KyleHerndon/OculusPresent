@@ -15,10 +15,21 @@ public class MyoController : MonoBehaviour
 
 	// Orientation variables ---------
 	// Update references when the pose becomes fingers spread or the q key is pressed.
-	bool updateReference = false;
+	private bool _updateReference = false;
 	// Calibration
 	private Quaternion _antiYaw = Quaternion.identity;
 	private float _referenceRoll = 0.0f;
+	private GameObject _laser;
+
+	void Awake () {
+		// Set up light
+		_laser = new GameObject("Laser Pointer");
+		_laser.transform.parent = this.transform;
+		_laser.AddComponent<Light>();
+		_laser.light.color = Color.red;
+		_laser.light.intensity = 0f;
+		_laser.transform.position = this.transform.position;
+	}
 
 	void Update () {
 		// Access the ThalmicMyo component attached to the Myo game object.
@@ -27,6 +38,7 @@ public class MyoController : MonoBehaviour
 		UpdateKeyPresses (thalmicMyo);
 		UpdatePoses (thalmicMyo);
 		UpdateOrientation (thalmicMyo);
+		Render();
 	}
 
 	// Draw some basic instructions.
@@ -51,13 +63,25 @@ public class MyoController : MonoBehaviour
 			          "Please perform the Setup Gesture."
 			          );
 		} else {
-			GUI.Label (new Rect (Screen.width / 4, Screen.height / 4, Screen.width / 2, Screen.height / 2),
+			/*GUI.Label (new Rect (Screen.width / 4, Screen.height / 4, Screen.width / 2, Screen.height / 2),
 			           "Fist: Vibrate Myo armband\n" +
 			           "Wave in: Set box material to blue\n" +
 			           "Wave out: Set box material to green\n" +
 			           "Thumb to pinky: Reset box material\n" +
 			           "Fingers spread: Set forward direction"
-			           );
+			           );*/
+		}
+	}
+
+	void Render() {
+		if(showPointer) {
+			RaycastHit hit;
+			if(Physics.Raycast(transform.position, transform.rotation * Vector3.forward, out hit, 100f)) {
+				_laser.transform.position = hit.point;
+				_laser.light.intensity = 1f;
+			}
+		} else {
+			_laser.light.intensity = 0f;
 		}
 	}
 
@@ -67,17 +91,17 @@ public class MyoController : MonoBehaviour
 		if (Input.GetKeyDown (KeyCode.Q)) {
 			hub.ResetHub();
 		} else if (Input.GetKeyDown (KeyCode.R)) {
-			updateReference = true;
+			_updateReference = true;
 		}
 	}
 
 	void UpdatePoses (ThalmicMyo thalmicMyo) {
 		if (thalmicMyo.pose != _lastPose && thalmicMyo.pose != Pose.Unknown) {
-			if (_lastPose != Pose.Rest) {
-				if(_lastPose == Pose.FingersSpread) {
-					showPointer = false;
-				}
-			}
+//			if (_lastPose != Pose.Rest) {
+//				if(_lastPose == Pose.FingersSpread) {
+//					showPointer = false;
+//				}
+//			}
 
 			_lastPose = thalmicMyo.pose;
 
@@ -102,7 +126,8 @@ public class MyoController : MonoBehaviour
 				print("Thumb to Pinky detected");
 
 			} else if (thalmicMyo.pose == Pose.FingersSpread) {
-				showPointer = true;
+				print("Fingers Spread detected");
+				showPointer = !showPointer;
 			}
 		}
 	}
@@ -110,7 +135,7 @@ public class MyoController : MonoBehaviour
 	void UpdateOrientation (ThalmicMyo thalmicMyo) {
 		// Update references. This anchors the joint on-screen such that it faces forward away
 		// from the viewer when the Myo armband is oriented the way it is when these references are taken.
-		if (updateReference) {
+		if (_updateReference) {
 			// _antiYaw represents a rotation of the Myo armband about the Y axis (up) which aligns the forward
 			// vector of the rotation with Z = 1 when the wearer's arm is pointing in the reference direction.
 			_antiYaw = Quaternion.FromToRotation (
@@ -125,7 +150,7 @@ public class MyoController : MonoBehaviour
 			// the roll value matches the reference.
 			Vector3 referenceZeroRoll = computeZeroRollVector (myo.transform.forward);
 			_referenceRoll = rollFromZero (referenceZeroRoll, myo.transform.forward, myo.transform.up);
-			updateReference = false;
+			_updateReference = false;
 		}
 		
 		// Current zero roll vector and roll value.
