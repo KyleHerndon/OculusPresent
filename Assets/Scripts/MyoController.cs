@@ -12,6 +12,8 @@ public class MyoController : MonoBehaviour
 	// Pose variables ---------------
 	private Pose _lastPose = Pose.Unknown;
 	public bool showPointer = false;
+	public bool grabEnabled = true;
+	private Transform _grab = null;
 
 	// Orientation variables ---------
 	// Update references when the pose becomes fingers spread or the q key is pressed.
@@ -19,6 +21,10 @@ public class MyoController : MonoBehaviour
 	// Calibration
 	private Quaternion _antiYaw = Quaternion.identity;
 	private float _referenceRoll = 0.0f;
+
+	private bool _updateGrabReference = false;
+	private Quaternion _grabInitialObjectRotation;
+	private Quaternion _grabInitialPointerRotation;
 	private GameObject _laser;
 
 	void Awake () {
@@ -76,9 +82,9 @@ public class MyoController : MonoBehaviour
 	}
 
 	void Render() {
-		if(showPointer) {
+		if(showPointer && _grab == null) {
 			RaycastHit hit;
-			if(Physics.Raycast(transform.position, transform.rotation * Vector3.forward, out hit, 100f)) {
+			if (Physics.Raycast(transform.position, transform.rotation * Vector3.forward, out hit, 100f)) {
 				_laser.transform.position = Vector3.MoveTowards(hit.point, this.transform.parent.position, .5f);
 				_laser.transform.rotation = Quaternion.LookRotation((hit.point - _laser.transform.position).normalized);
 				_laser.light.intensity = 1f;
@@ -100,11 +106,6 @@ public class MyoController : MonoBehaviour
 
 	void UpdatePoses (ThalmicMyo thalmicMyo) {
 		if (thalmicMyo.pose != _lastPose && thalmicMyo.pose != Pose.Unknown) {
-//			if (_lastPose != Pose.Rest) {
-//				if(_lastPose == Pose.FingersSpread) {
-//					showPointer = false;
-//				}
-//			}
 
 			_lastPose = thalmicMyo.pose;
 
@@ -117,6 +118,17 @@ public class MyoController : MonoBehaviour
 
 			if (thalmicMyo.pose == Pose.Fist) {
 				print("Fist detected");
+				if (grabEnabled) {
+					if (_grab == null) {
+						RaycastHit hit;
+						if (Physics.Raycast (transform.position, transform.rotation * Vector3.forward, out hit, 100f)) {
+							_grab = hit.collider.transform;
+						}
+						_updateGrabReference = true;
+					} else {
+						_grab = null;
+					}
+				}
 
 			} else if (thalmicMyo.pose == Pose.WaveIn) {
 				if (thalmicMyo.arm == Thalmic.Myo.Arm.Left) {
@@ -134,6 +146,10 @@ public class MyoController : MonoBehaviour
 
 			} else if (thalmicMyo.pose == Pose.ThumbToPinky) {
 				print("Thumb to Pinky detected");
+				if (Mathf.Approximately (_referenceRoll, 0f)) {
+					_updateReference = true;
+					print("Calibrated");
+				}
 
 			} else if (thalmicMyo.pose == Pose.FingersSpread) {
 				print("Fingers Spread detected");
@@ -161,8 +177,12 @@ public class MyoController : MonoBehaviour
 			Vector3 referenceZeroRoll = computeZeroRollVector (myo.transform.forward);
 			_referenceRoll = rollFromZero (referenceZeroRoll, myo.transform.forward, myo.transform.up);
 			_updateReference = false;
+		} else if (_updateGrabReference) {
+			_grabInitialObjectRotation = _grab.transform.rotation;
+			_grabInitialPointerRotation = transform.rotation;
+			_updateGrabReference = false;
 		}
-		
+
 		// Current zero roll vector and roll value.
 		Vector3 zeroRoll = computeZeroRollVector (myo.transform.forward);
 		float roll = rollFromZero (zeroRoll, myo.transform.forward, myo.transform.up);
@@ -189,19 +209,22 @@ public class MyoController : MonoBehaviour
 			                                    transform.localRotation.z,
 			                                    -transform.localRotation.w);
 		}
+
+		if (_grab != null) {
+			_grab.rotation = Quaternion.Inverse (transform.rotation) * _grabInitialPointerRotation * _grabInitialObjectRotation;
+		}
 	}
-	
+
 	// Compute the angle of rotation clockwise about the forward axis relative to the provided zero roll direction.
 	// As the armband is rotated about the forward axis this value will change, regardless of which way the
 	// forward vector of the Myo is pointing. The returned value will be between -180 and 180 degrees.
-	float rollFromZero (Vector3 zeroRoll, Vector3 forward, Vector3 up)
-	{
+	float rollFromZero (Vector3 zeroRoll, Vector3 forward, Vector3 up) {
 		// The cosine of the angle between the up vector and the zero roll vector. Since both are
 		// orthogonal to the forward vector, this tells us how far the Myo has been turned around the
 		// forward axis relative to the zero roll vector, but we need to determine separately whether the
 		// Myo has been rolled clockwise or counterclockwise.
 		float cosine = Vector3.Dot (up, zeroRoll);
-		
+
 		// To determine the sign of the roll, we take the cross product of the up vector and the zero
 		// roll vector. This cross product will either be the same or opposite direction as the forward
 		// vector depending on whether up is clockwise or counter-clockwise from zero roll.
@@ -209,26 +232,24 @@ public class MyoController : MonoBehaviour
 		Vector3 cp = Vector3.Cross (up, zeroRoll);
 		float directionCosine = Vector3.Dot (forward, cp);
 		float sign = directionCosine < 0.0f ? 1.0f : -1.0f;
-		
+
 		// Return the angle of roll (in degrees) from the cosine and the sign.
 		return sign * Mathf.Rad2Deg * Mathf.Acos (cosine);
 	}
-	
+
 	// Compute a vector that points perpendicular to the forward direction,
 	// minimizing angular distance from world up (positive Y axis).
 	// This represents the direction of no rotation about its forward axis.
-	Vector3 computeZeroRollVector (Vector3 forward)
-	{
+	Vector3 computeZeroRollVector (Vector3 forward) {
 		Vector3 antigravity = Vector3.up;
 		Vector3 m = Vector3.Cross (myo.transform.forward, antigravity);
 		Vector3 roll = Vector3.Cross (m, myo.transform.forward);
-		
+
 		return roll.normalized;
 	}
-	
+
 	// Adjust the provided angle to be within a -180 to 180.
-	float normalizeAngle (float angle)
-	{
+	float normalizeAngle (float angle) {
 		if (angle > 180.0f) {
 			return angle - 360.0f;
 		}
