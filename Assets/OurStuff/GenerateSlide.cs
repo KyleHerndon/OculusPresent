@@ -3,16 +3,16 @@ using System.Collections;
 using SimpleJSON;
 
 public class GenerateSlide : MonoBehaviour {
-	GameObject prefab;
-	Texture tmpText;
-	TextAsset layout;
+	public GameObject prefab;
+	public Texture tmpText;
+	public TextAsset layout;
 
 	private JSONNode slides;
 	private int slideN = 0;
 	private Carousel carousel;
 
 
-	void Start () {
+	void Awake () {
 		carousel = (Carousel) GetComponent<Carousel>();
 		slides = JSONNode.Parse(layout.ToString());
 		carousel.AddToCarousel(slides["slides"][slideN]);

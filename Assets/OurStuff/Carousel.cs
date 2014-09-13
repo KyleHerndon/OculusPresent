@@ -6,19 +6,19 @@ using TextSize;
 
 public class Carousel : MonoBehaviour
 {
-	List<GameObject> slides = new List<GameObject>();
-	float CONSTELLATION = 70f;
-	float RADIUS = 5f;
-	float ROTATION_SPEED = 75f;
-	int MAX_SLIDES = 4;
+	public List<GameObject> slides = new List<GameObject>();
+	public float CONSTELLATION = 90f;
+	public float RADIUS = 5.5f;
+	public float ROTATION_SPEED = 75f;
+	public int MAX_SLIDES = 4;
 
-	float rotateDist = -1f;
-	GameObject prefab;
+	public float rotateDist = -1f;
+	public GameObject prefab;
 
-	GameObject titleFab;
-	GameObject bodyFab;
+	public GameObject titleFab;
+	public GameObject bodyFab;
 
-	Texture defaultT;
+	public Texture defaultT;
 
 	TextSize.TextSize ts;
 
@@ -65,7 +65,7 @@ public class Carousel : MonoBehaviour
 				tm = newTitle.GetComponent<TextMesh>();
 				tm.text = args["title"];
 				Bounds bounds = tm.renderer.bounds;
-				newTitle.transform.localScale.Set (1f/bounds.size.z * newSlide.transform.localScale.x - 0.1f, newTitle.transform.localScale.y, newTitle.transform.localScale.z);
+				newTitle.transform.localScale = new Vector3(1f/bounds.size.z * newSlide.transform.localScale.x - 0.1f, newTitle.transform.localScale.y, newTitle.transform.localScale.z);
 				newTitle.transform.parent = newSlide.transform;
 				newTitle.transform.localPosition = new Vector3( 0f , 0.4f, 0.5f);
 			}
@@ -74,7 +74,7 @@ public class Carousel : MonoBehaviour
 
 				GameObject newBody = (GameObject) Instantiate( bodyFab );
 				tm = newBody.GetComponent<TextMesh>();
-				newBody.transform.localScale.Set (newSlide.transform.localScale.x*.1f, newSlide.transform.localScale.y*.1f, newBody.transform.localScale.z);
+				newBody.transform.localScale = new Vector3(newSlide.transform.localScale.x*.1f, newSlide.transform.localScale.y*.1f, newBody.transform.localScale.z);
 				newBody.transform.parent = newSlide.transform;
 				newBody.transform.localPosition = new Vector3( 0.46f, 0.25f, 0.5f);
 				ts = new TextSize.TextSize(tm);
@@ -85,14 +85,14 @@ public class Carousel : MonoBehaviour
 				foreach (String s in words) {
 					newS += s+" ";
 					if (ts.GetTextWidth(newS) > newSlide.transform.localScale.x*0.92f) {
-						fin+=oldS+"\n";
+						fin +=oldS+"\n";
 						newS = s+" ";
 						oldS = "";
 					} else if (s.IndexOf("\\n") > 0) {
-						oldS+=s.Substring(0, s.IndexOf("\\n"))+"\n\n";
-						fin+=oldS;
-						newS = "";
-						oldS = "";
+						oldS	+= s.Substring(0, s.IndexOf("\\n"))+"\n\n";
+						fin		+= oldS;
+						newS	=  "";
+						oldS	=  "";
 					} else {
 						oldS = newS;
 					}
@@ -100,8 +100,8 @@ public class Carousel : MonoBehaviour
 				fin += newS;
 				tm.text = fin;//.Replace("\\n", "\n");
 
-				newBody.transform.rotation.eulerAngles.Set (0, -90, 0);
-				newBody.transform.localScale.Set (.1f, newBody.transform.localScale.y, newBody.transform.localScale.z);
+				newBody.transform.eulerAngles = new Vector3(0, -90, 0);
+				newBody.transform.localScale = new Vector3(.1f, newBody.transform.localScale.y, newBody.transform.localScale.z);
 
 			}
 

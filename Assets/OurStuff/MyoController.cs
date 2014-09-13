@@ -46,6 +46,8 @@ public class MyoController : MonoBehaviour
 		// Set up slides
 		slideGen = slideShow.GetComponent<GenerateSlide>();
 		carousel = slideShow.GetComponent<Carousel>();
+		print(slideGen);
+		print(carousel);
 	}
 
 	void Update () {
