@@ -28,13 +28,15 @@ public class MyoController : MonoBehaviour
 		_laser.AddComponent<Light>();
 		_laser.light.color = Color.red;
 		_laser.light.intensity = 0f;
+		_laser.light.range = 100f;
+		_laser.light.type = LightType.Spot;
 		_laser.transform.position = this.transform.position;
 	}
 
 	void Update () {
 		// Access the ThalmicMyo component attached to the Myo game object.
 		ThalmicMyo thalmicMyo = myo.GetComponent<ThalmicMyo> ();
-		
+
 		UpdateKeyPresses (thalmicMyo);
 		UpdatePoses (thalmicMyo);
 		UpdateOrientation (thalmicMyo);
@@ -77,7 +79,8 @@ public class MyoController : MonoBehaviour
 		if(showPointer) {
 			RaycastHit hit;
 			if(Physics.Raycast(transform.position, transform.rotation * Vector3.forward, out hit, 100f)) {
-				_laser.transform.position = hit.point;
+				_laser.transform.position = Vector3.MoveTowards(hit.point, this.transform.parent.position, .5f);
+				_laser.transform.rotation = Quaternion.LookRotation((hit.point - _laser.transform.position).normalized);
 				_laser.light.intensity = 1f;
 			}
 		} else {
@@ -104,6 +107,13 @@ public class MyoController : MonoBehaviour
 //			}
 
 			_lastPose = thalmicMyo.pose;
+
+			if (thalmicMyo.pose == Pose.Rest) {
+				return;
+			}
+
+			// Give feedback
+			thalmicMyo.Vibrate (VibrationType.Short);
 
 			if (thalmicMyo.pose == Pose.Fist) {
 				print("Fist detected");
