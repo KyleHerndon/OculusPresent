@@ -278,8 +278,9 @@ public class OVRCamera : MonoBehaviour
 
 			bool useOrt = (CameraController.EnableOrientation &&
 			               !(CameraController.TimeWarp && CameraController.FreezeTimeWarp));	
-			if(useOrt)
+			if(useOrt) {
 				CameraOrientation = renderPose.Orientation.ToQuaternion();
+			}
 		}
 		
 		// Calculate the rotation Y offset that is getting updated externally
