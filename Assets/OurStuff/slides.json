@@ -1,0 +1,9 @@
+{
+	slides: [
+		{
+			background-color: #222222,
+			title: "Welcome to PresentSphere",
+			text: "Swipe with your arm to the left in a large sweeping motion to continue"
+		}
+	]
+}

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+jshint src;
+node build.js modules=animation no-svg-export &&
+cp dist/fabric.min.js ../fabricjs.com/lib/fabric_static.js &&
+node build.js modules=ALL exclude=gestures &&
+npm test &&
+cp dist/fabric.js ../fabricjs.com/lib/fabric.js &&
+cp test/unit/*.js ../fabricjs.com/test/unit &&
+cd ../fabricjs.com &&
+node build_docs.js &&
+node build_plato_report.js &&
+cd ../fabric.js
+
+#
+# printio:      node build.js modules=ALL exclude=node,json,gestures,itext no-strict
+# fabricjs.com  node build.js modules=ALL exclude=gestures,itext
+#
