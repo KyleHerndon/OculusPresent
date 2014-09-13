@@ -123,10 +123,8 @@ public class MyoController : MonoBehaviour
 						RaycastHit hit;
 						if (Physics.Raycast (transform.position, transform.rotation * Vector3.forward, out hit, 100f)) {
 							_grab = hit.collider.transform;
+							_updateGrabReference = true;
 						}
-						_updateGrabReference = true;
-					} else {
-						_grab = null;
 					}
 				}
 
@@ -153,7 +151,11 @@ public class MyoController : MonoBehaviour
 
 			} else if (thalmicMyo.pose == Pose.FingersSpread) {
 				print("Fingers Spread detected");
-				showPointer = !showPointer;
+				if (_grab == null) {
+					showPointer = !showPointer;
+				} else {
+					_grab = null;
+				}
 			}
 		}
 	}
