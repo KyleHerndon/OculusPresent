@@ -1,9 +1,20 @@
 {
 	slides: [
 		{
-			background-color: #222222,
+			type: "slide",
+			background-color: ".2,.5,.7",
 			title: "Welcome to PresentSphere",
-			text: "Swipe with your arm to the left in a large sweeping motion to continue"
+			text: "Swipe with your arm to the left in a large sweeping motion to continue.\n Also, in case you were wondering,\n the large brown fox jumped over the lazy dog and mwmhahahah"
+		},
+		{
+			type: "slide",
+			background-color: ".7,.5,.2",
+			title: "Some More Text!",
+			text: "Lorem ipsum dolor sit amet. Ego non loquor latinam bene, sed volo ego potior blah blah blah balh balh balh balh balh balh balh balhbal hablva hlba"
+		},
+		{
+			type: "model",
+			url: "http://www.everyday3d.com/unity3d/obj/monkey.obj"
 		}
 	]
 }
