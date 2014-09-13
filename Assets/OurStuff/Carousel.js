@@ -23,7 +23,7 @@ function Start () {
 }
 
 function Update () {
-	Debug.Log(rotateDist);
+	// Debug.Log(rotateDist);
 	if (rotateDist > 0 ) {
 		var dA: float = Time.deltaTime * ROTATION_SPEED; 
 		for (var s:GameObject in slides) {

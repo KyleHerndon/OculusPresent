@@ -30,7 +30,7 @@ using System.Collections;
  please give it back to the community.
  
  */
- 
+namespace TextSize {
 public class TextSize {
 	private Hashtable dict; //map character -> width
 	
@@ -86,4 +86,5 @@ public class TextSize {
 	public float width { get { return GetTextWidth(textMesh.text); } }
 	public float height { get { return renderer.bounds.size.y; } }
 	
+}
 }

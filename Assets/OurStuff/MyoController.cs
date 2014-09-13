@@ -9,6 +9,11 @@ public class MyoController : MonoBehaviour
 	// This object must have a ThalmicMyo script attached.
 	public GameObject myo = null;
 
+	// Slideshow controller
+	public GameObject slideShow;
+	private GenerateSlide slideGen;
+	private Carousel carousel;	
+
 	// Pose variables ---------------
 	private Pose _lastPose = Pose.Unknown;
 	public bool showPointer = false;
@@ -37,6 +42,10 @@ public class MyoController : MonoBehaviour
 		_laser.light.range = 100f;
 		_laser.light.type = LightType.Spot;
 		_laser.transform.position = this.transform.position;
+		
+		// Set up slides
+		slideGen = slideShow.GetComponent<GenerateSlide>();
+		carousel = slideShow.GetComponent<Carousel>();
 	}
 
 	void Update () {
@@ -140,6 +149,7 @@ public class MyoController : MonoBehaviour
 					print("Wave LEFT detected (left arm)");
 				} else if (thalmicMyo.arm == Thalmic.Myo.Arm.Right) {
 					print("Wave RIGHT detected (right arm)");
+					slideGen.Advance();
 				}
 
 			} else if (thalmicMyo.pose == Pose.ThumbToPinky) {
