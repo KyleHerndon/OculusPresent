@@ -135,6 +135,7 @@ public class MyoController : MonoBehaviour
 						if (Physics.Raycast (transform.position, transform.rotation * Vector3.forward, out hit, 100f)) {
 							_grab = hit.collider.transform;
 							_updateGrabReference = true;
+							print("Grabbed");
 						}
 					}
 				}
@@ -142,16 +143,19 @@ public class MyoController : MonoBehaviour
 			} else if (thalmicMyo.pose == Pose.WaveIn) {
 				if (thalmicMyo.arm == Thalmic.Myo.Arm.Left) {
 					print("Wave RIGHT detected (left arm)");
+
 				} else if (thalmicMyo.arm == Thalmic.Myo.Arm.Right) {
 					print("Wave LEFT detected (right arm)");
+					slideGen.Advance();
 				}
 
 			} else if (thalmicMyo.pose == Pose.WaveOut) {
 				if (thalmicMyo.arm == Thalmic.Myo.Arm.Left) {
 					print("Wave LEFT detected (left arm)");
+					slideGen.Advance();
+
 				} else if (thalmicMyo.arm == Thalmic.Myo.Arm.Right) {
 					print("Wave RIGHT detected (right arm)");
-					slideGen.Advance();
 				}
 
 			} else if (thalmicMyo.pose == Pose.ThumbToPinky) {
@@ -165,8 +169,10 @@ public class MyoController : MonoBehaviour
 				print("Fingers Spread detected");
 				if (_grab == null) {
 					showPointer = !showPointer;
+					print("Pointer " + showPointer.ToString());
 				} else {
 					_grab = null;
+					print("Released");
 				}
 			}
 		}

@@ -27,7 +27,7 @@ public class Carousel : MonoBehaviour
 		if (rotateDist > 0 ) {
 			float dA = Time.deltaTime * ROTATION_SPEED; 
 			foreach (GameObject s in slides) {
-				s.transform.RotateAround(Vector3.zero, Vector3.up, dA);
+				s.transform.RotateAround(Vector3.zero, Vector3.down, dA);
 			}
 			rotateDist -= dA;
 		}
