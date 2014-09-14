@@ -6,13 +6,14 @@ public class GenerateSlide : MonoBehaviour {
 	public GameObject prefab;
 	public Texture tmpText;
 	public TextAsset layout;
+	public Texture black;
 
 	private JSONNode slides;
 	private int slideMax = 0;
 	private int slideIndex = 0;
 	private Carousel carousel;
 	private bool _locked = false;
-	private float _outro = -1f;
+	private float _outro = 2f;
 
 
 	void Awake () {
@@ -22,6 +23,7 @@ public class GenerateSlide : MonoBehaviour {
 		carousel.RotateCarousel();
 		slideMax++;
 		slideIndex++;
+		_locked = true;
 	}
 
 	void Update () {
@@ -30,29 +32,35 @@ public class GenerateSlide : MonoBehaviour {
 		} else if (Input.GetKeyDown (KeyCode.LeftArrow)) {
 			Reverse();
 		}
-		if (_outro > 0) {
-			_outro -= Time.deltaTime / 1.5f;
-			if (_outro < -.5f) {
+		if (_outro < 2f) {
+			_outro += Time.deltaTime;
+			if (_outro > 1.5f) {
 				Application.LoadLevel("Scene1");
 			}
 		}
 	}
 
 	void OnGUI () {
-		if (_outro > 0) {
+		if (_outro < 1.9f) {
 			GUI.color = new Color(1f, 1f, 1f, _outro);
+			GUI.DrawTexture(new Rect(-5, -5, Screen.width + 10, Screen.height + 10), black);
 		}
 	}
 
 	public void Advance () {
+		if (slideIndex > slides["slides"].Count) {
+			_outro = 0;
+			print("outch");
+			carousel.RotateCarousel();
+			_locked = true;
+			return;
+		}
 		if (!_locked && slideIndex <= slides["slides"].Count) {
 			if (slideMax == slideIndex) {
 				bool added = carousel.AddToCarousel(slides["slides"][slideMax]);
 				if (added) {
 					slideIndex++;
 					slideMax++;
-				} else {
-					_outro = 1;
 				}
 			} else { slideIndex++; }
 			carousel.RotateCarousel();

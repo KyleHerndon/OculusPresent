@@ -55,7 +55,7 @@ public class Carousel : MonoBehaviour
 			newSlide.renderer.materials[0].mainTexture = slide;
 			
 			if (args["background-color"] != null) {
-				Debug.Log(args["background-color"].ToString().Split("\""[0])[1]);
+				// Debug.Log(args["background-color"].ToString().Split("\""[0])[1]);
 				String[] cols = args["background-color"].ToString().Split("\""[0])[1].Split(","[0]); 
 				float r = float.Parse(cols[0]);
 				float g = float.Parse(cols[1]);
@@ -130,7 +130,7 @@ public class Carousel : MonoBehaviour
 			obj.objPath = args["url"];
 			return true;
 		}
-		return false;
+		return true;
 	}
 
 	public void RemoveFromCarousel() {
