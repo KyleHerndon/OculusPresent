@@ -1,0 +1,28 @@
+{
+	slides: [
+		{
+			type: "slide",
+			background-color: ".2,.5,.7",
+			title: "Welcome to Present.VR!",
+			text: "Wave your hand to the left to continue.\n Alternatively, wave right to go backwards.\n Try it now!\n "
+		},
+		{
+			type: "slide",
+			background-color: ".7,.5,.2",
+			title: "Well done!",
+			text: "Spread your fingers apart to activate your laser pointer.\n \n \n"
+		},
+		{
+			type: "slide",
+			background-color: ".2,.5,.7",
+			title: "Almost there...",
+			text: "Make a fist while pointing at an object to start rotating it.\n Spread your fingers to stop.\n \n ",
+		}
+		{
+			type: "slide",
+			background-color: ".7,.5,.2",
+			title: "Let's get started!",
+			text: "This is only a glimpse of Present.VR's flexibility.\n Go on to see what it can really do!\n \n "
+		}
+	]
+}

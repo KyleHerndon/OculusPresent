@@ -14,22 +14,31 @@ public class Carousel : MonoBehaviour
 
 	public float rotateDist = -1f;
 	public GameObject prefab;
-
 	public GameObject titleFab;
 	public GameObject bodyFab;
+	public GenerateSlide slideGen;
 
 	public Texture defaultT;
 
 	TextSize.TextSize ts;
+	bool _reverse = false;
 
 	void Update () {
 		// Debug.Log(rotateDist);
-		if (rotateDist > 0 ) {
+		if (rotateDist > 0) {
 			float dA = Time.deltaTime * ROTATION_SPEED; 
 			foreach (GameObject s in slides) {
-				s.transform.RotateAround(Vector3.zero, Vector3.down, dA);
+				if (_reverse) {
+					s.transform.RotateAround(Vector3.zero, Vector3.up, dA);
+				} else {
+					s.transform.RotateAround(Vector3.zero, Vector3.down, dA);
+				}
 			}
 			rotateDist -= dA;
+
+			if (rotateDist <= 0) {
+				slideGen.Refresh();
+			}
 		}
 	}
 
@@ -83,7 +92,7 @@ public class Carousel : MonoBehaviour
 				String oldS	= "";
 				String newS	= "";
 				foreach (String s in words) {
-					newS += s+" ";
+					newS += s + " ";
 					if (ts.GetTextWidth(newS) > newSlide.transform.localScale.x*0.92f) {
 						fin +=oldS+"\n";
 						newS = s+" ";
@@ -125,13 +134,14 @@ public class Carousel : MonoBehaviour
 	}
 
 	public void RemoveFromCarousel() {
-		Destroy(slides[0]);
-		slides.RemoveAt(0);
+		Destroy(slides[slides.Count - 1]);
+		slides.RemoveAt(slides.Count - 1);
 	}
 
-	public void RotateCarousel() {
+	public void RotateCarousel( bool reverse = false ) {
 		if (rotateDist < 0) {
 			rotateDist = CONSTELLATION;
+			_reverse = reverse;
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using Pose = Thalmic.Myo.Pose;
 using VibrationType = Thalmic.Myo.VibrationType;
@@ -30,6 +31,7 @@ public class MyoController : MonoBehaviour
 	private bool _updateGrabReference = false;
 	private Quaternion _grabInitialObjectRotation;
 	private Quaternion _grabInitialPointerRotation;
+	private Quaternion _parentRotation;
 	private GameObject _laser;
 
 	void Awake () {
@@ -63,39 +65,32 @@ public class MyoController : MonoBehaviour
 	// Draw some basic instructions.
 	void OnGUI ()
 	{
-		GUI.skin.label.fontSize = 20;
-		
+		GUI.skin.box.fontSize = 20;
+		GUI.backgroundColor = new Color(1f, 1f, 1f, .7f);
+
 		ThalmicHub hub = ThalmicHub.instance;
 		ThalmicMyo thalmicMyo = myo.GetComponent<ThalmicMyo> ();
-		
+
+		String text = "";
 		if (!hub.hubInitialized) {
-			GUI.Label(new Rect (Screen.width / 4, Screen.height / 4, Screen.width / 2, Screen.height / 2),
-			          "Cannot contact Myo Connect. Is Myo Connect running?\n" +
-			          "Press Q to try again."
-			          );
+			text = "Cannot contact Myo Connect.\n" +
+				"Press Q to try again.";
 		} else if (!thalmicMyo.isPaired) {
-			GUI.Label(new Rect (Screen.width / 4, Screen.height / 4, Screen.width / 2, Screen.height / 2),
-			          "No Myo currently paired."
-			          );
+			text = "No Myo currently paired.";
 		} else if (!thalmicMyo.armRecognized) {
-			GUI.Label(new Rect (Screen.width / 4, Screen.height / 4, Screen.width / 2, Screen.height / 2),
-			          "Please perform the Setup Gesture."
-			          );
+			text = "Please perform the Setup Gesture.";
 		} else {
-			/*GUI.Label (new Rect (Screen.width / 4, Screen.height / 4, Screen.width / 2, Screen.height / 2),
-			           "Fist: Vibrate Myo armband\n" +
-			           "Wave in: Set box material to blue\n" +
-			           "Wave out: Set box material to green\n" +
-			           "Thumb to pinky: Reset box material\n" +
-			           "Fingers spread: Set forward direction"
-			           );*/
+			return;
 		}
+		GUI.skin.box.alignment = TextAnchor.MiddleCenter;
+		GUI.Box(new Rect (0, 0, Screen.width/2, Screen.height), text);
+		GUI.Box(new Rect (Screen.width/2, 0, Screen.width/2, Screen.height), text);
 	}
 
 	void Render() {
 		if(showPointer && _grab == null) {
 			RaycastHit hit;
-			if (Physics.Raycast(transform.position, transform.rotation * Vector3.forward, out hit, 100f)) {
+			if (Physics.Raycast(transform.position, transform.rotation * Vector3.forward, out hit, 50f)) {
 				_laser.transform.position = Vector3.MoveTowards(hit.point, this.transform.parent.position, .5f);
 				_laser.transform.rotation = Quaternion.LookRotation((hit.point - _laser.transform.position).normalized);
 				_laser.light.intensity = 1f;
@@ -143,27 +138,29 @@ public class MyoController : MonoBehaviour
 			} else if (thalmicMyo.pose == Pose.WaveIn) {
 				if (thalmicMyo.arm == Thalmic.Myo.Arm.Left) {
 					print("Wave RIGHT detected (left arm)");
+					slideGen.Reverse ();
 
 				} else if (thalmicMyo.arm == Thalmic.Myo.Arm.Right) {
 					print("Wave LEFT detected (right arm)");
-					slideGen.Advance();
+					slideGen.Advance ();
 				}
 
 			} else if (thalmicMyo.pose == Pose.WaveOut) {
 				if (thalmicMyo.arm == Thalmic.Myo.Arm.Left) {
 					print("Wave LEFT detected (left arm)");
-					slideGen.Advance();
+					slideGen.Advance ();
 
 				} else if (thalmicMyo.arm == Thalmic.Myo.Arm.Right) {
 					print("Wave RIGHT detected (right arm)");
+					slideGen.Reverse ();
 				}
 
 			} else if (thalmicMyo.pose == Pose.ThumbToPinky) {
 				print("Thumb to Pinky detected");
-				if (Mathf.Approximately (_referenceRoll, 0f)) {
+				//if (Mathf.Approximately (_referenceRoll, 0f)) {
 					_updateReference = true;
 					print("Calibrated");
-				}
+				//}
 
 			} else if (thalmicMyo.pose == Pose.FingersSpread) {
 				print("Fingers Spread detected");
@@ -196,6 +193,7 @@ public class MyoController : MonoBehaviour
 			// the roll value matches the reference.
 			Vector3 referenceZeroRoll = computeZeroRollVector (myo.transform.forward);
 			_referenceRoll = rollFromZero (referenceZeroRoll, myo.transform.forward, myo.transform.up);
+			_parentRotation = transform.parent.GetChild(0).rotation;
 			_updateReference = false;
 		} else if (_updateGrabReference) {
 			_grabInitialObjectRotation = _grab.transform.rotation;
