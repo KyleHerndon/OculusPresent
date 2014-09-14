@@ -7,7 +7,7 @@ using System.Globalization;
 public class OBJ : MonoBehaviour {
 	
 	public string objPath;
-	
+
 	/* OBJ file tags */
 	private const string O 	= "o";
 	private const string G 	= "g";

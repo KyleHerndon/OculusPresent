@@ -3,8 +3,8 @@
 		{
 			type: "slide",
 			background-color: ".2,.5,.7",
-			title: "Welcome to PresentSphere",
-			text: "Swipe with your arm to the left in a large sweeping motion to continue.\n Also, in case you were wondering,\n the large brown fox jumped over the lazy dog and mwmhahahah"
+			title: "Welcome to Present.VR",
+			text: "Present.VR brings a whole new dimenstion to your slides.\n Incorporating traditional slides along with interactable models, Present.VR makes understanding data far easier then with a 2-D slideshow."
 		},
 		{
 			type: "slide",

@@ -11,6 +11,8 @@ public class GenerateSlide : MonoBehaviour {
 	private int slideN = 0;
 	private Carousel carousel;
 
+	private GameObject model;
+
 
 	void Awake () {
 		carousel = (Carousel) GetComponent<Carousel>();
@@ -18,6 +20,17 @@ public class GenerateSlide : MonoBehaviour {
 		carousel.AddToCarousel(slides["slides"][slideN]);
 		carousel.RotateCarousel();
 		slideN++;
+
+		model = RenderModel("http://www.everyday3d.com/unity3d/obj/monkey.obj");
+	}
+
+	GameObject RenderModel(string url) {
+		GameObject newObj = new GameObject();
+		newObj.AddComponent<OBJ>();	
+		OBJ obj = newObj.GetComponent<OBJ>();
+		obj.objPath = url;
+
+		return newObj;
 	}
 
 	void Update () {
