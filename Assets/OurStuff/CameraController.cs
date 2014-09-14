@@ -71,6 +71,11 @@ public class CameraController : MonoBehaviour {
 				_animation = 1;
 				_time = 0f;
 				obj[_index].gameObject.SetActive(true);
+//				if (_index == 3) {
+//					obj[_index + 1].gameObject.SetActive(true);
+//				} else if (_index == 4) {
+//					obj[++_index].gameObject.SetActive(true);
+//				}
 				setUpAnimation(FORWARD);
 			} else {
 				_index--;
