@@ -52,7 +52,7 @@ public class TextSize {
 		textMesh.text = "a a";
 		float cw = renderer.bounds.size.x - 2* aw;
 		
-		MonoBehaviour.print("char< > " + cw);
+		// MonoBehaviour.print("char< > " + cw);
 		dict.Add(' ', cw);
 		dict.Add('a', aw);
 		

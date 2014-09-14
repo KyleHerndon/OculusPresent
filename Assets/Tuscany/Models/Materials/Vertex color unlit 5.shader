@@ -21,7 +21,7 @@ Category {
         Pass { 
         
             SetTexture [_MainTex] {
-                Combine texture * primary
+                Combine texture * primary DOUBLE
             }
             
             SetTexture [_MainTex] {
