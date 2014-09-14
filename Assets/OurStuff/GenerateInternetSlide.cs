@@ -2,14 +2,12 @@ using UnityEngine;
 using System.Collections;
 using SimpleJSON;
 
-public class GenerateSlide : MonoBehaviour {
+public class GenerateInternetSlide : MonoBehaviour {
 	public GameObject prefab;
 	public Texture tmpText;
-	public TextAsset layout;
+	private TextAsset layout;
 	public Texture black;
 	public GameObject myoHub;
-
-	public bool isInternet;
 
 	private JSONNode slides;
 	private int slideMax = 0;
@@ -17,28 +15,26 @@ public class GenerateSlide : MonoBehaviour {
 	private Carousel carousel;
 	private bool _locked = false;
 	private float _outro = 2f;
-	private bool canStart;
 
 	private GameObject model;
+
+	private bool canStart = false;
+
 	private WWW www;
 
 
 	void Awake () {
-		canStart = !isInternet;
 		carousel = (Carousel) GetComponent<Carousel>();
-		if (!isInternet) {
-			slides = JSONNode.Parse(layout.ToString());
-			carousel.AddToCarousel(slides["slides"][slideMax]);
-			carousel.RotateCarousel();
-			slideMax++;
-			slideIndex++;
-			_locked = true;
-		}
+		/**slides = JSONNode.Parse(layout.ToString());
+		carousel.AddToCarousel(slides["slides"][slideMax]);
+		carousel.RotateCarousel();
+		slideMax++;
+		slideIndex++;
+		_locked = true;
+		**/
 	}
+
 	void LoadFile(string name) {
-		if (!isInternet) {
-			return;
-		}
 		www = new WWW("http://presentvr.mybluemix.net/raw/"+name);
 
 	}
@@ -78,7 +74,6 @@ public class GenerateSlide : MonoBehaviour {
 	}
 
 	public void Advance () {
-		if (!canStart) {return; }
 		if (!_locked && slideIndex > slides["slides"].Count) {
 			_outro = 0;
 			print("outch");
@@ -101,7 +96,6 @@ public class GenerateSlide : MonoBehaviour {
 	}
 
 	public void Reverse () {
-		if (!canStart) {return; }
 		if (!_locked && slideIndex > 1) {
 			carousel.RotateCarousel(true);
 			slideIndex--;
