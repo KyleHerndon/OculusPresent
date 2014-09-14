@@ -7,6 +7,7 @@ public class GenerateSlide : MonoBehaviour {
 	public Texture tmpText;
 	public TextAsset layout;
 	public Texture black;
+	public GameObject myoHub;
 
 	private JSONNode slides;
 	private int slideMax = 0;
@@ -34,6 +35,9 @@ public class GenerateSlide : MonoBehaviour {
 		}
 		if (_outro < 2f) {
 			_outro += Time.deltaTime;
+			if (_outro > 1.1f) {
+				Destroy(myoHub);
+			}
 			if (_outro > 1.5f) {
 				Application.LoadLevel("Scene1");
 			}
@@ -48,7 +52,7 @@ public class GenerateSlide : MonoBehaviour {
 	}
 
 	public void Advance () {
-		if (slideIndex > slides["slides"].Count) {
+		if (!_locked && slideIndex > slides["slides"].Count) {
 			_outro = 0;
 			print("outch");
 			carousel.RotateCarousel();
