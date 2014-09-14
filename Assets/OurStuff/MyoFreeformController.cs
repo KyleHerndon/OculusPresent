@@ -114,7 +114,7 @@ public class MyoFreeformController : MonoBehaviour
 			}
 			
 			// Give feedback
-			thalmicMyo.Vibrate (VibrationType.Short);
+			// thalmicMyo.Vibrate (VibrationType.Short);
 			
 			if (thalmicMyo.pose == Pose.Fist) {
 				print("Fist detected");
@@ -124,6 +124,7 @@ public class MyoFreeformController : MonoBehaviour
 						if (Physics.Raycast (transform.position, transform.rotation * Vector3.forward, out hit, 100f)) {
 							_grab = hit.collider.transform;
 							_updateGrabReference = true;
+							thalmicMyo.Vibrate (VibrationType.Short);
 							print("Grabbed");
 						}
 					}
@@ -132,20 +133,24 @@ public class MyoFreeformController : MonoBehaviour
 			} else if (thalmicMyo.pose == Pose.WaveIn) {
 				if (thalmicMyo.arm == Thalmic.Myo.Arm.Left) {
 					print("Wave RIGHT detected (left arm)");
+					thalmicMyo.Vibrate (VibrationType.Short);
 					CC.Reverse ();
 					
 				} else if (thalmicMyo.arm == Thalmic.Myo.Arm.Right) {
 					print("Wave LEFT detected (right arm)");
+					thalmicMyo.Vibrate (VibrationType.Short);
 					CC.Advance ();
 				}
 				
 			} else if (thalmicMyo.pose == Pose.WaveOut) {
 				if (thalmicMyo.arm == Thalmic.Myo.Arm.Left) {
 					print("Wave LEFT detected (left arm)");
+					thalmicMyo.Vibrate (VibrationType.Short);
 					CC.Advance ();
 					
 				} else if (thalmicMyo.arm == Thalmic.Myo.Arm.Right) {
 					print("Wave RIGHT detected (right arm)");
+					thalmicMyo.Vibrate (VibrationType.Short);
 					CC.Reverse ();
 				}
 				
@@ -153,11 +158,13 @@ public class MyoFreeformController : MonoBehaviour
 				print("Thumb to Pinky detected");
 				//if (Mathf.Approximately (_referenceRoll, 0f)) {
 				_updateReference = true;
+				thalmicMyo.Vibrate (VibrationType.Short);
 				print("Calibrated");
 				//}
 				
 			} else if (thalmicMyo.pose == Pose.FingersSpread) {
 				print("Fingers Spread detected");
+				thalmicMyo.Vibrate (VibrationType.Short);
 				if (_grab == null) {
 					showPointer = !showPointer;
 					print("Pointer " + showPointer.ToString());

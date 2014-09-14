@@ -69,7 +69,7 @@ public class MyoCardboardController : MonoBehaviour
 			}
 			
 			// Give feedback
-			thalmicMyo.Vibrate (VibrationType.Short);
+			//thalmicMyo.Vibrate (VibrationType.Short);
 			
 			if (thalmicMyo.pose == Pose.Fist) {
 				print("Fist detected");
@@ -77,20 +77,24 @@ public class MyoCardboardController : MonoBehaviour
 			} else if (thalmicMyo.pose == Pose.WaveIn) {
 				if (thalmicMyo.arm == Thalmic.Myo.Arm.Left) {
 					print("Wave RIGHT detected (left arm)");
+					thalmicMyo.Vibrate (VibrationType.Short);
 					CM.Reverse ();
 					
 				} else if (thalmicMyo.arm == Thalmic.Myo.Arm.Right) {
 					print("Wave LEFT detected (right arm)");
+					thalmicMyo.Vibrate (VibrationType.Short);
 					CM.Advance ();
 				}
 				
 			} else if (thalmicMyo.pose == Pose.WaveOut) {
 				if (thalmicMyo.arm == Thalmic.Myo.Arm.Left) {
 					print("Wave LEFT detected (left arm)");
+					thalmicMyo.Vibrate (VibrationType.Short);
 					CM.Advance ();
 					
 				} else if (thalmicMyo.arm == Thalmic.Myo.Arm.Right) {
 					print("Wave RIGHT detected (right arm)");
+					thalmicMyo.Vibrate (VibrationType.Short);
 					CM.Reverse ();
 				}
 				
