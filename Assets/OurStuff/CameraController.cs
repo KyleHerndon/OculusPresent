@@ -9,7 +9,7 @@ public class CameraController : MonoBehaviour {
 	public GameObject myoHub;
 	public Texture blackout;
 	
-	private int _index = 0;
+	private int _index = -1;
 	private int _animation = 0;
 	private float _time = 0f;
 	private Quaternion _rotationStart;
@@ -22,6 +22,9 @@ public class CameraController : MonoBehaviour {
 	private const int BACKWARD = 1;
 	
 	void Awake () {
+		foreach(Transform t in obj) {
+			t.gameObject.SetActive(false);
+		}
 	}
 	
 	void Update () {
@@ -67,6 +70,7 @@ public class CameraController : MonoBehaviour {
 			if (++_index < obj.Length) {
 				_animation = 1;
 				_time = 0f;
+				obj[_index].gameObject.SetActive(true);
 				setUpAnimation(FORWARD);
 			} else {
 				_index--;
