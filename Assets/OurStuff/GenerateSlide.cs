@@ -39,7 +39,7 @@ public class GenerateSlide : MonoBehaviour {
 				Destroy(myoHub);
 			}
 			if (_outro > 1.5f) {
-				Application.LoadLevel("Scene1");
+				Application.LoadLevel("Scene2");
 			}
 		}
 	}
